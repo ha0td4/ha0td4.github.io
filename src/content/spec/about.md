@@ -1,4 +1,9 @@
 # About me
-Hello from ha0td4,
 
-As a proactive Information Security student at [VNUHCM - University of Information Technology](https://en.uit.edu.vn/), I am deeply passionate about cybersecurity, machine learning, and malware detection. 
+Hello, I am Hao.
+
+I'm a student and security intern at [VNUHCM - University of Information Technology](https://en.uit.edu.vn/).
+
+My interest in cyber security began with a curiosity about why my laptop got lag during gaming sessions (now I know not to install any cr@cked games from Russian forums). Then I went down the rabbit hole of finding hidden flags in binary files, packet captures, and memory dumps. I was alone in this field for a while, but now i meet the security enthusiasts who are somehow still my friends despite my terrible cybersecurity puns.
+
+I'm currently researching malware threat and intrusion detection systems, which include machine learning applications in. This blog functions as my personal library where I share projects, findings, and thoughts on various security topics.
