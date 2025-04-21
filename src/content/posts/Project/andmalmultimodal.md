@@ -53,18 +53,11 @@ A pre-trained DistilBERT model is fine-tuned on the API call sequences. DistilBE
 
 # Feature Fusion
 
-The outputs from the three branches (each 128-dimensional on last hidden layer, or 1/5 dimesional on logit layer) are fused to create a comprehensive representation of the APK file. The fusion process combines features from all modalities to improve prediction performance.
-There are many fusion strategy, but mainly I've done it on early-fusion and late-fusion:
-
-## Early-fusion
-
+The outputs from the three branches (each 128-dimensional on last hidden layer, or 1-dimesional on logit layer) are fused to create a comprehensive representation of the APK file. The fusion process combines features from all modalities to improve prediction performance.
+There are many fusion strategy, but mainly I've done it on intermediately fusion:
 - Concatenation of the three feature vectors (DNN, CNN, and BERT outputs).
 - Attention mechanisms to emphasize critical features.
 - Gated-fusion mechianism to utilize various information seamlessly for auto-adjusting prediction on each models.
-
-## Late-fusion
-
-- Predictions from the individual branches are combined using methods such as weighted averaging, ensemble learning, or majority voting.
 
 # Experimental Results
 
@@ -74,56 +67,24 @@ Below is a comparison table of the models. While binary classification only care
 
 My models were trained on Kaggle, with CPU Intel(R) Xeon(R) CPU @ 2.20GHz, 13 GB RAM, GPU Tesla P100-PCIE-16GB; Python 3.9, PyTorch 1.9.
 
-## Binary Classification
+## Classification report
 
 | Model                        | Acc.  | Rec.  | Pre.  | F1    | Training time (mins) | Testing time (mins) |
 |------------------------------|-------|-------|-------|-------|----------------------|---------------------|
-| DNN                          | 96.88 | 96.88 | 96.90 | 96.89 | 0.62                 | 0.10                |
-| CNN                          | 95.15 | 95.15 | 95.21 | 95.17 | 1.55                 | 0.21                |
-| BERT                         | 87.18 | 87.18 | 86.83 | 86.94 | 181.62               | 35.89               |
-| Multimodal (concatenation)   | 98.16 | 98.16 | 98.16 | 98.16 | 318.20               | 53.40               |
-| Multimodal (attention)       | 98.30 | 98.30 | 98.30 | 98.30 | 315.17               | 52.20               |
-| Multimodal (gated-fusion)    | 97.96 | 97.96 | 97.96 | 97.96 | 180.54               | 35.08               |
+| DNN                          | 96.88 | 95.97 | 95.56 | 95.77 | 0.62                 | 0.10                |
+| CNN                          | 95.15 | 93.90 | 93.01 | 93.44 | 1.55                 | 0.21                |
+| BERT                         | 87.18 | 80.75 | 83.18 | 81.85 | 181.62               | 35.89               |
+| Multimodal (concatenation)   | 97.72 | 96.81 | 96.97 | 96.89 | 179.60               | 34.15               |
+| Multimodal (attention)       | 97.70 | 95.89 | 97.80 | 96.80 | 181.66               | 35.03               |
+| Multimodal (gated-fusion)    | 97.44 | 96.71 | 96.34 | 96.52 | 180.89               | 34.76               |
 
-DNN performs well with high accuracy (96.88%), precision (96.90%), recall (96.88%), and F1 score (96.89%). It is also the fastest in terms of training (0.62 mins) and testing (0.10 mins).
-
-CNN has slightly lower performance compared to DNN, with accuracy and F1 scores around 95%. It is slower than DNN but still relatively efficient.
-
-BERT underperforms compared to DNN and CNN, with accuracy and F1 scores around 87%. It is significantly slower in both training (181.62 mins) and testing (35.89 mins), likely due to its complex architecture and large number of parameters.
-
-All multimodal methods (concatenation, attention, and gated fusion) outperform single-modality models (DNN, CNN, BERT) in terms of accuracy, precision, recall, and F1 score (all above 97%).
-
-Multimodal (attention) achieves the highest performance (98.30% accuracy and F1 score), but it requires the longest training time (315.17 mins).
-
-Multimodal (gated fusion) strikes a balance between performance (97.96% accuracy and F1 score) and efficiency, with significantly lower training time (180.54 mins) compared to concatenation and attention-based methods.
-
-## Multi-class Classification
-
-| Model                        | Acc.  | Rec.  | Pre.  | F1    | Training time (mins) | Testing time (mins) |
-|------------------------------|-------|-------|-------|-------|----------------------|---------------------|
-| DNN                          | 91.95 | 91.27 | 89.64 | 90.08 | 0.60                 | 0.10                |
-| CNN                          | 86.68 | 84.32 | 83.98 | 84.14 | 1.55                 | 0.21                |
-| BERT                         | 76.98 | 72.24 | 72.87 | 72.37 | 178.58               | 34.50               |
-| Multimodal (concatenation)   | 95.67 | 94.63 | 95.50 | 95.04 | 314.30               | 51.80               |
-| Multimodal (attention)       | 95.55 | 95.55 | 95.54 | 95.54 | 314.60               | 51.42               |
-| Multimodal (gated-fusion)    | 95.53 | 95.53 | 95.56 | 95.52 | 184.97               | 37.18               |
-
-DNN performs well again, with accuracy (91.95%) and F1 score (90.08%). It remains the fastest model in terms of training and testing times.
-
-CNN shows a noticeable drop in performance compared to DNN, with accuracy (86.68%) and F1 score (84.14%). This suggests that CNNs may struggle more with multi-class tasks compared to binary classification.
-
-BERT performs the worst among all models, with accuracy (76.98%) and F1 score (72.37%). Its poor performance might be due to the complexity of multi-class tasks and the lack of sufficient fine-tuning or data.
-
-All multimodal methods achieve significantly higher performance compared to single-modality models, with accuracy and F1 scores above 95%.
-
-Multimodal (concatenation) achieves the highest accuracy (95.67%) and F1 score (95.04%).
-
-Multimodal (attention) and Multimodal (gated fusion) perform similarly, with slight differences in precision and recall.
-
-Multimodal (gated fusion) is the most efficient among multimodal methods, with training time (184.97 mins) closer to BERT but much faster than concatenation and attention-based methods.
+- DNN performs well with all high evaluation metrics. It is also the fastest in terms of training (0.62 mins) and testing (0.10 mins).
+- CNN has slightly lower performance compared to DNN, with accuracy and F1 scores around 95%. It is slower than DNN but still relatively efficient.
+- BERT underperforms compared to DNN and CNN, with all evaluation metrics around 80-90%. It is significantly slower in both training (181.62 mins) and testing (35.89 mins), likely due to its complex architecture and large number of parameters.
+- All multimodal methods (concatenation, attention, and gated fusion) outperform single-modality models (DNN, CNN, BERT) in all of evaluation metrics (all above 97%).
 
 # Conclusion
 
 We explored a multimodal approach for detecting Android malware using deep learning feature fusion. By integrating three distinct branches—Deep Neural Networks (DNN), Convolutional Neural Networks (CNN), and Bidirectional Encoder Representations from Transformers (BERT)—we were able to leverage complementary features extracted from Android APK files. 
 
-For those interested in experimenting with the framework, the Kaggle notebook [AndMalMultimodal](https://www.kaggle.com/code/haotienducanh/andmalmultimodal/output?scriptVersionId=219451852) provides a practical starting point (btw, sorry for various versions, I can't delete failed version T.T). Feel free to explore, modify, and build upon this work to advance the field of Android malware detection.
+For those interested in experimenting with the framework, the Kaggle notebook [AndMalMultimodal](https://www.kaggle.com/code/haotienducanh/andmalmultimodal/output?scriptVersionId=219451852) provides a practical starting point. Feel free to explore, modify, and build upon this work to advance the field of Android malware detection.

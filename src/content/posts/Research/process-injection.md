@@ -24,13 +24,7 @@ Before we understand what process injection is, we need to know about the concep
 ### Process Address Space
 
 A process address space is a space that is allocated to each process in the operating system based on the amount of memory the computer has. Each process that is allocated memory space will be given a set of memory address spaces. Each memory address space has a different purpose, depending on the programmer's code, on the executable format used (such as the PE format), and on the operating system, which actually takes care of loading the process and its attributes, mapping allocated virtual addresses to physical addresses, and more. The following diagram shows a sample layout of a typical process address space:
-
-|Kernel|
----
-|Program and Program data|
-|Stack|
-|Heap|
-|Global data, including: Shared memory, Shared Libraries or DLLs|
+![image](https://hackmd.io/_uploads/HyoV6HXJeg.png)
 
 ### Process-injection steps
 
@@ -46,16 +40,7 @@ process.
 5. Finally, execute the injected code.
 
 The following diagram depicts this entire process in a simplified form:
-
-```mermaid
-graph LR
-injector[Injector]
-target[Target Process]
-func[Malicious Functionality]
-
-injector-- Handle, Alloc + Exec Permissions, Injection, Execution -->target
-target-->func
-```
+![image](https://hackmd.io/_uploads/S1chpSXJll.png)
 
 Now that we have this high-level perspective into how process injection or code injection is performed, let's turn to an explanation of Windows API functions.
 
@@ -72,7 +57,6 @@ There are many sub techniques of process injection, but we'll explore some of th
 ### [Classic DLL Injection](https://attack.mitre.org/techniques/T1055/001/)
 
 This technique forces the loading of a malicious DLL into a remote process by using these six basic Windows API functions:
-
 - **OpenProcess**: Using this function and providing the target process ID as one of its parameters, the injector process receives a handle to the remote process.
 - **VirtualAllocEx**: Using this function, the injector process allocates a memory buffer that will eventually contain a path of the loaded DLL within the target process.
 - **WriteProcessMemory**: This function performs the actual injection, inserting the malicious payload into the target process.
@@ -87,7 +71,6 @@ Example in IDA Pro:
 
 This injection technique lets us create a legitimate process within the operating system in a `SUSPENDED` state, hollow out the memory content of the legitimate process, and replace it with malicious content followed by the matched base address of the hollowed section.
 Here are the API function calls used to perform the process-hollowing injection technique:
-
 - **CreateProcess**: This function creates a legitimate operating system process (such as notepad.exe) in a suspended state with a `dwCreationFlags` parameter.
 - **ZwUnmapViewOfSection/NtUnmapViewOfSection**: Those Native API functions perform an unmap for  he entire memory space of a specific section of a process. At this stage, the legitimate system process has a hollowed section, allowing the malicious process to write its malicious content into this hollowed section.
 - **VirtualAllocEx**: Before writing malicious content, this function allows us to allocate new memory space.
@@ -102,7 +85,6 @@ An example about malware using process hollowing in IDA Pro:
 
 This fascinating process-injection technique is mostly used to bypass antivirus engines and can be used to evade some memory forensics tools and techniques.
 Process doppelgänging makes use of the following Windows API and Native API functions:
-
 - **CreateFileTransacted**: This function creates or opens a file, file stream, or directory based on Microsoft's NTFS-TxF feature. This is used to open a legitimate process such as notepad.exe.
 - **WriteFile**: This function writes data to the destined injected file.
 - **NtCreateSection**: This function creates a new section and loads the malicious file into the newly created target process.
@@ -116,7 +98,6 @@ An example about PE file using process doppelgänging:
 ### Process Herpaderping
 
 The Process Herpaderping technique bypasses security products by obscuring the intentions of the process, making it difficult for security tools to detect and prevent the malicious activity. It use the following functions:
-
 - **CreateProcess**: Creates a new process in a suspended state.
 - **NtCreateSection**: Creates a section object to share memory between processes.
 - **NtMapViewOfSection**: Maps a view of the section into the address space of the target process.
@@ -124,29 +105,7 @@ The Process Herpaderping technique bypasses security products by obscuring the i
 - **SetThreadContext**: Sets the context of the main thread of the target process to point to the entry point of the malicious code.
 - **ResumeThread**: Resumes the main thread of the target process, causing it to execute the malicious code.
 
-```mermaid
-stateDiagram-v2
-    [*] --> CreateFile
-    CreateFile --> FileHandle
-    FileHandle --> Write
-    FileHandle --> NtCreateSection
-    NtCreateSection --> SectionHandle
-    SectionHandle --> NtCreateProcessEx
-    FileHandle --> Modify
-    NtCreateProcessEx --> NtCreateThreadEx
-    NtCreateThreadEx --> [*]
-    FileHandle --> CloseFile
-    NtCreateThreadEx --> PspCallProcessNotifyRoutines
-    CloseFile --> IRP_MJ_CLEANUP
-    PspCallProcessNotifyRoutines --> Inspect
-    IRP_MJ_CLEANUP --> Inspect
-
-note left of Modify : Obscure the file on disk
-note right of Inspect
-The contents on disk do not match what was executed.
-Inspection of the file at this point will result in incorrect attribution.
-end note
-```
+![image](https://hackmd.io/_uploads/rywSArmkee.png)
 
 ### Comparison
 

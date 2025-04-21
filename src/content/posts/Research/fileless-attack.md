@@ -10,47 +10,46 @@ lang: ''
 ---
 
 <!-- markdownlint-disable MD013 -->
-# Fileless Attack
 
 A fileless attack is a type of attack that does not rely on executable files to perform malicious functionality. Instead, the malicious payload is not loaded into memory from disk but rather executed directly in memory through a series of fileless techniques. It fully leverages system memory, system services, legitimate binaries, and trusted applications to carry out the attack.
 
-## 1. Taxonomy of fileless attack
+#  Taxonomy of fileless attack
 
 Here is a brief of fileless attacks that will be discussed below:
 ![image](https://hackmd.io/_uploads/By2t16psJe.png)
 
-### 1.1. Memory-based fileless attack
+## 1. Memory-based fileless attack
 
 Memory-based fileless attacks refer to attacks where the attacker *runs malicious code only in memory without writing to disk*. Then, after gaining access to the target environment through system vulnerabilities, the attacker can directly execute the malicious payload in memory without leaving any traces on the disk. Attackers can use various techniques to achieve memory-based fileless attacks, such as malicious PE injection or executing PowerShell script code.
 
-#### 1.1.1. Vulnerability exploitation
+### 1.1. Vulnerability exploitation
 
 Vulnerability exploitation is a highly potent fileless attack, with zero-day attacks representing the most formidable approach. When a target host system has vulnerabilities, attackers can remotely intrude the system through vulnerability exploitation and execute malicious code directly in memory without needing the file released.
 > A prominent example is the `WannaCry` ransomware, which exploited an SMB (Server Message Block) vulnerability named EternalBlue part of the Microsoft security bulletin [MS17-010](https://learn.microsoft.com/en-us/security-updates/securitybulletins/2017/ms17-010). WannaCry infiltrates systems through the EternalBlue vulnerability and propagates within the local network using this exploit. Once it gains privileges on the target host, it sends a payload, which has been XOR encrypted, to be executed in the memory of the target machine. During the initial stage of this attack, no malicious PE files are released onto the disk, and all operations are conducted in memory.
 
-#### 1.1.2. Memory resident malware
+### 1.2. Memory resident malware
 
 Memory resident malware resides entirely in the system’s main memory without touching the file systems. Therefore, it typically does not leave any visible traces in the system’s files.
 > Typical example of memory-based malware is `SQL Slammer` worm, this was 376 bytes in size, perfectly fitting into a single network packet, allowing it to spread rapidly upon launch. It exploited a vulnerability in Microsoft’s SQL server by sending formatted requests to UDP port 1434, causing infected routers to start sending this malicious code to random IP addresses, resulting in DDOS attacks.
 
 Memory resident malware typically exploits vulnerabilities for initial intrusion and continues to reside only in memory once inside the system. However, due to the volatile nature of memory, memory resident malware cannot achieve persistence, and restarting the computer will render it ineffective.
 
-#### 1.1.3. Process injection
+### 1.3. Process injection
 
 Process injection executes arbitrary code within the address space of a separate active process to access the process’s memory and system/network resources. To improve the stealthiness of an attack, attackers may inject malicious code into a legitimate process in the operating system to evade detection. Because process injection hides the execution of malicious code within a legitimate process and allows launching payloads within the running process’s memory space without putting any malicious code on the disk, it can evade detection by some security products. PE injection, reflective DLL injection, and process hollowing are three typical fileless process injection techniques.
 
-### 1.2. Service-based fileless attack
+## 2. Service-based fileless attack
 
 The Windows platform has a range of services or characteristics that can be exploited by attackers, with the most known being the registry and the scheduled tasks, often utilized for fileless persistence.
 
-#### 1.2.1. Registry resident attack
+### 2.1. Registry resident attack
 
 The registry is a system-defined database in which applications and system components store and retrieve configuration data. Storing malicious scripts in the Windows registry is one of the most popular fileless loading entries.
 > `Poweliks` heavily utilizes the registry mechanism of Windows for malicious activities.
 > ![image](https://hackmd.io/_uploads/ryVX0Paskx.png)
 > Poweliks first embeds malicious JavaScript code into the registry, first writing a piece of JavaScript code to a registry entry, which will call rundll32.exe to read and execute the JavaScript code stored in the registry key value. It then writes another piece of JavaScript code, which releases an encrypted PowerShell script that subsequently loads a malicious DLL and is stored as an encrypted string in the registry.
 
-#### 1.2.2. Scheduled task
+### 2.2. Scheduled task
 
 Windows Scheduled Tasks, also known as Task Scheduler, is a builtin Windows feature that allows users to schedule and automate the
 execution of various tasks or programs on their computers. This technique is widely employed by current attackers and red teams for achieving persistence and lateral movement. Attackers can create scheduled tasks using `schtasks.exe` or utilize .NET wrappers and `netapi32` library for task creation.
@@ -62,7 +61,7 @@ execution of various tasks or programs on their computers. This technique is wid
 >
 Recent attack cases ([Microsoft Incident Response and Microsoft Threat Intelligence, 2022](https://www.microsoft.com/en-us/security/blog/2022/04/12/tarrask-malware-uses-scheduled-tasks-for-defense-evasion/)) have shown that attackers store the essential parameters required by malicious scheduled tasks in the registry, ensuring they continue to run even after system reboots.
 
-#### 1.2.3. ADS attack
+### 2.3. ADS attack
 
 Alternate Data Streams (ADS) is a unique feature of NTFS file systems introduced with Windows NT 3.1 in the early 1990s to provide compatibility between Windows NT servers and Macintosh clients, which use Hierarchical File System (HFS). Typically, a file has only one default data stream that stores the main content of the file. However, ADS allows multiple data streams to be added to a file, enabling it to store more data. Thus, attackers can use ADS to store various types of files, including audio, video, images, and malicious code such as viruses, trojans, and ransomware. Furthermore, due to the hidden nature of alternate data streams, users cannot detect them using directory listing commands. The most significant advantage of this approach is that it does not affect the file size, making it difficult for ordinary users to detect.
 > Here is an example of ADS attack:
@@ -72,12 +71,12 @@ Alternate Data Streams (ADS) is a unique feature of NTFS file systems introduced
 > wmic process call create c:\ty\host.txt:putty.exe
 > ```
 
-### 1.3. LotL-based fileless attack
+## 3. LotL-based fileless attack
 
 Living-off-the-Land (LotL) attack has become increasingly popular as a fileless attack technique in recent years. Recent studies have shown that LotL techniques are widely used, especially in APT attacks, with a prevalence rate of 26.26% in APT malware samples using LotL attacks.
 > **A Living-off-the-Land (LotL)** attack is a type of attack in that attackers carry out malicious activities leveraging pre-installed and post-installed binaries within a system. The objects exploited in such attacks encompass documents, scripts, and LoLBins.
 
-#### 1.3.1. LoLBins-based attack
+### 3.1. LoLBins-based attack
 
 The binary files used for LotL attacks are called LoLBins (Living off the Land Binaries). By leveraging these binaries, attackers can conduct information gathering, credential dumping, persistence, and lateral movement without leaving any binary files on the disk. LoLBins-based attack has become very popular in recent years. Attackers can hide their malicious activities from many legitimate processes using legitimate tools in the system.
 > The `Lazarus` group often uses `mshta.exe`, `wmic.exe`, `schtasks.exe`, etc., for lateral movement, proxy execution, and payload loading.
@@ -88,7 +87,7 @@ The LoLBins can be divided into two categories: the *binary pre-installed* by th
 The table below show some common LoLBins and their common purposes:
 ![image](https://hackmd.io/_uploads/r1-ycOao1x.png)
 
-#### 1.3.2. Document-based attack
+### 3.2. Document-based attack
 
 Attackers often trigger malicious macros embedded in Office documents (such as MS Word, MS Excel, or MS PowerPoint) through Office vulnerabilities or phishing emails. Attackers can write malicious macros to gain access, compromise the system, or bypass other security controls.
 > For example, attackers can use macros to access C2 servers and download malicious files to execute malicious functions locally. Attackers can also use macros to decrypt and release the PowerShell script and then call and execute it to achieve other malicious purposes.
@@ -99,49 +98,11 @@ Malicious PDF files generally fall into three categories: *JavaScript-based*, *A
 Even though the malicious document files exploited by attackers are not binary files themselves, the execution of these documents relies on the underlying binary software.
 > For example, opening a .doc document requires the `winword.exe`, and opening a .pdf document requires `acrobat.exe` (Adobe’s PDF reader). The execution of documents relies on these binary executables. When attackers exploit document macros or vulnerabilities, they are effectively leveraging the features provided by these binaries to conduct their attacks.
 
-#### 1.3.3. Script-based attack
+### 3.3. Script-based attack
 
 Attackers can use built-in scripting language interpreters in Windows, such as PowerShell, VBScript, and JavaScript, to load corresponding payload scripts remotely and execute them in memory without any script file landing. Script attacks are often combined with other attack techniques, such as registry resident attacks, malicious document attacks, registry resident attacks.
 In recent years, more and more attack reports have shown that PowerShell is widely used in various types of network attacks, such as APT attacks, ransomware attacks, and general cybercrime, with attackers using PowerShell malicious scripts to carry out attacks.
 
-## 2. Detection and mitigation
-
-### 2.1. Rule-based detection
-
-#### 2.1.1. Yara-based detection
-
-#### 2.1.2. Sigma-based detection
-
-#### 2.1.3. Dynamic detection
-
-> **Brief summary**. Rule-based attack detection is a traditional method that is easy to expand, can respond quickly, and applies to multiple platforms. This approach is applicable to various types of organizations, is easy to deploy, and does not require high-computational IT infrastructure. However, its disadvantage is that it cannot detect unknown attacks, relies on expert experience and existing attack data, and has weak generalization ability, often requiring the maintenance of an extensive and complicated rule repository.
-
-### 2.2. Machine learning-based detection
-
-#### 2.2.1. Detecting document-based attack
-
-#### 2.2.2. Detecting script-based attack
-
-#### 2.2.3. Detecting vulnerability attack
-
-### 2.3. Deep learning-based detection
-
-#### 2.3.1. Detecting malicious PowerShell
-
-#### 2.3.2. Detecting LotL attack
-
-> **Brief summary**. Deep learning models excel in terms of accuracy and FPR, especially when dealing with features like PowerShell commands or LoLBins commands that are amenable to feature extraction through NLP. These models may produce results that deviate significantly from expert knowledge. This lack of interpretability poses significant challenges in many security scenarios because when the model issues an alert, it fails to provide reasons behind its decision. Consequently, defenders are unable to improve their defense measures based on these alerts. Therefore, the interpretability of deep learning-based algorithms for fileless attack detection is a crucial topic that demands attention.
-
-### 2.4. Provenance graph-based attack detection
-
-**Provenance graph definition**
-![image](https://hackmd.io/_uploads/ByFccyRsJg.png)
-
-![image](https://hackmd.io/_uploads/rkRloyCske.png)
-An illustration of the behavior differences between normal system activities and malicious activities using provenance graphs. 1©: winword.exe openes a .doc document containing a malicious macro. 2©: The malicious macro invoked reg.exe through cmd.exe to write malicious PowerShell script code into the registry. 3©: The malicious macro invoked powershell.exe through cmd.exe to read the malicious PowerShell script from the registry and execute it. 4©: The executed malicious script accessed the C2 (Command and Control) server.
-
-**Brief summary**
-
-## Reference
+# Reference
 
 Liu, S., Peng, G., Zeng, H., & Fu, J. (2024). A survey on the evolution of fileless attacks and detection techniques. Computers & Security, 137, 103653.
