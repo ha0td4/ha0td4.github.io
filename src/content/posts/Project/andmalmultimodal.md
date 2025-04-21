@@ -15,7 +15,7 @@ Below is an explanation of a multimodal approach for detecting Android malware u
 
 # Overview the framework
 
-![image](https://hackmd.io/_uploads/SJoLGySd1l.png)
+![image](https://hackmd.io/_uploads/BJNzSSm1lg.png)
 
 My research multimodal framework integrates complementary features extracted from Android APK files using three separate branches:
 
@@ -67,7 +67,7 @@ Below is a comparison table of the models. While binary classification only care
 
 My models were trained on Kaggle, with CPU Intel(R) Xeon(R) CPU @ 2.20GHz, 13 GB RAM, GPU Tesla P100-PCIE-16GB; Python 3.9, PyTorch 1.9.
 
-## Classification report
+## Classification Report
 
 | Model                        | Acc.  | Rec.  | Pre.  | F1    | Training time (mins) | Testing time (mins) |
 |------------------------------|-------|-------|-------|-------|----------------------|---------------------|
@@ -85,6 +85,6 @@ My models were trained on Kaggle, with CPU Intel(R) Xeon(R) CPU @ 2.20GHz, 13 GB
 
 # Conclusion
 
-We explored a multimodal approach for detecting Android malware using deep learning feature fusion. By integrating three distinct branches—Deep Neural Networks (DNN), Convolutional Neural Networks (CNN), and Bidirectional Encoder Representations from Transformers (BERT)—we were able to leverage complementary features extracted from Android APK files. 
+We explored a multimodal approach for detecting Android malware using deep learning feature fusion. By integrating three distinct branches—DNN, CNN, and BERT—we were able to leverage complementary features extracted from Android APK files. 
 
-For those interested in experimenting with the framework, the Kaggle notebook [AndMalMultimodal](https://www.kaggle.com/code/haotienducanh/andmalmultimodal/output?scriptVersionId=219451852) provides a practical starting point. Feel free to explore, modify, and build upon this work to advance the field of Android malware detection.
+For those interested in experimenting with the framework, the Kaggle notebook [AndMalMultimodal](https://www.kaggle.com/code/haotienducanh/andmalmultimodal) provides a practical starting point. Feel free to explore, modify, and build upon this work to advance the field of Android malware detection.
