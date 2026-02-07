@@ -24,7 +24,7 @@ Before we understand what process injection is, we need to know about the concep
 ### Process Address Space
 
 A process address space is a space that is allocated to each process in the operating system based on the amount of memory the computer has. Each process that is allocated memory space will be given a set of memory address spaces. Each memory address space has a different purpose, depending on the programmer's code, on the executable format used (such as the PE format), and on the operating system, which actually takes care of loading the process and its attributes, mapping allocated virtual addresses to physical addresses, and more. The following diagram shows a sample layout of a typical process address space:
-![image](https://hackmd.io/_uploads/HyoV6HXJeg.png)
+![Process Address Space](/src/assets/images/posts/process-injection/01.png)
 
 ### Process-injection steps
 
@@ -40,7 +40,7 @@ process.
 5. Finally, execute the injected code.
 
 The following diagram depicts this entire process in a simplified form:
-![image](https://hackmd.io/_uploads/S1chpSXJll.png)
+![Process-injection steps](/src/assets/images/posts/process-injection/02.png)
 
 Now that we have this high-level perspective into how process injection or code injection is performed, let's turn to an explanation of Windows API functions.
 
@@ -65,7 +65,7 @@ This technique forces the loading of a malicious DLL into a remote process by us
 
 After performing these six functions, the malicious DLL file runs within the operating system inside the address space of the target victim process.
 Example in IDA Pro:
-![image](https://hackmd.io/_uploads/Bk-Ehl3s1e.png)
+![Classic DLL Injection](/src/assets/images/posts/process-injection/03.png)
 
 ### [Process Hollowing](https://attack.mitre.org/techniques/T1055/012/)
 
@@ -78,8 +78,8 @@ Here are the API function calls used to perform the process-hollowing injection 
 - **SetThreadContext and ResumeThread**: These functions return the context to the thread and return the process to its running state, meaning the process will start to execute.
 
 An example about malware using process hollowing in IDA Pro:
-![image](https://hackmd.io/_uploads/r1rqpenjJe.png)
-![image](https://hackmd.io/_uploads/Sk52ag3iJl.png)
+![Process Hollowing-1](/src/assets/images/posts/process-injection/04.png)
+![Process Hollowing-2](/src/assets/images/posts/process-injection/05.png)
 
 ### [Process Doppelgänging](https://attack.mitre.org/techniques/T1055/013/)
 
@@ -92,8 +92,8 @@ Process doppelgänging makes use of the following Windows API and Native API fun
 - **NtCreateProcessEx, RtlCreateProcessParametersEx, VirtualAllocEx, WriteProcessMemory, NtCreateThreadEx, NtResumeThread**: All of these functions are used to initiate and run the altered process so that it can perform its intended malicious activity.
 
 An example about PE file using process doppelgänging:
-![image](https://hackmd.io/_uploads/r1Cs0ghoJg.png)
-![image](https://hackmd.io/_uploads/HycTCxhj1e.png)
+![Process Doppelgänging-1](/src/assets/images/posts/process-injection/06.png)
+![Process Doppelgänging-2](/src/assets/images/posts/process-injection/07.png)
 
 ### Process Herpaderping
 
@@ -105,7 +105,7 @@ The Process Herpaderping technique bypasses security products by obscuring the i
 - **SetThreadContext**: Sets the context of the main thread of the target process to point to the entry point of the malicious code.
 - **ResumeThread**: Resumes the main thread of the target process, causing it to execute the malicious code.
 
-![image](https://hackmd.io/_uploads/rywSArmkee.png)
+![Process Herpaderping](/src/assets/images/posts/process-injection/08.png)
 
 ### Comparison
 
@@ -127,4 +127,4 @@ The registered kernel callback is invoked when the initial thread is inserted, n
 ## Other techniques
 
 You can explore more techniques from: <https://www.exploit-db.com/docs/47983>
-![image](https://hackmd.io/_uploads/SJ1Ngb3oyl.png)
+![Other techniques](/src/assets/images/posts/process-injection/09.png)

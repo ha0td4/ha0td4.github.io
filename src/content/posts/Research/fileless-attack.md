@@ -16,7 +16,7 @@ A fileless attack is a type of attack that does not rely on executable files to 
 #  Taxonomy of fileless attack
 
 Here is a brief of fileless attacks that will be discussed below:
-![image](https://hackmd.io/_uploads/By2t16psJe.png)
+![Taxonomy of fileless attack](/src/assets/images/posts/fileless-attack/01.png)
 
 ## 1. Memory-based fileless attack
 
@@ -46,7 +46,7 @@ The Windows platform has a range of services or characteristics that can be expl
 
 The registry is a system-defined database in which applications and system components store and retrieve configuration data. Storing malicious scripts in the Windows registry is one of the most popular fileless loading entries.
 > `Poweliks` heavily utilizes the registry mechanism of Windows for malicious activities.
-> ![image](https://hackmd.io/_uploads/ryVX0Paskx.png)
+> ![Poweliks](/src/assets/images/posts/fileless-attack/02.png)
 > Poweliks first embeds malicious JavaScript code into the registry, first writing a piece of JavaScript code to a registry entry, which will call rundll32.exe to read and execute the JavaScript code stored in the registry key value. It then writes another piece of JavaScript code, which releases an encrypted PowerShell script that subsequently loads a malicious DLL and is stored as an encrypted string in the registry.
 
 ### 2.2. Scheduled task
@@ -56,7 +56,7 @@ execution of various tasks or programs on their computers. This technique is wid
 > A RAT like `Agent Tesla` achieves persistence by creating scheduled tasks, as exemplified by the following command:
 >
 > ```cmd
-> schtasks.exe /Create /TN “UpdatesxjZWstBWrIuw” /XML C:Users\xx\AppDataLocal\Temp\tmp1718.tmp”
+> schtasks.exe /Create /TN "UpdatesxjZWstBWrIuw" /XML "C:Users\xx\AppDataLocal\Temp\tmp1718.tmp"
 > ```
 >
 Recent attack cases ([Microsoft Incident Response and Microsoft Threat Intelligence, 2022](https://www.microsoft.com/en-us/security/blog/2022/04/12/tarrask-malware-uses-scheduled-tasks-for-defense-evasion/)) have shown that attackers store the essential parameters required by malicious scheduled tasks in the registry, ensuring they continue to run even after system reboots.
@@ -85,7 +85,7 @@ The binary files used for LotL attacks are called LoLBins (Living off the Land B
 
 The LoLBins can be divided into two categories: the *binary pre-installed* by the system and the *binary post-installed* with a legal signature by users. The pre-installed binaries are system programs that existed in the System32 folder in the Windows system by default and can be directly called through the command line, such as `mshta.exe`, `bitsadmin.exe`, `wmic.exe`, etc. User post-installed binaries are those applications with legal signatures installed by users on the system later, such as `Word`, `Excel`, and `PowerPoint` in the office suite and `PsExec` of Sysinternals.
 The table below show some common LoLBins and their common purposes:
-![image](https://hackmd.io/_uploads/r1-ycOao1x.png)
+![LoLBins](/src/assets/images/posts/fileless-attack/03.png)
 
 ### 3.2. Document-based attack
 
