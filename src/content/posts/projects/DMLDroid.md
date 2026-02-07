@@ -15,7 +15,7 @@ Below is an explanation of a multimodal approach for detecting Android malware u
 
 # Overview the framework
 
-![DMLDroid framework](/src/assets/images/posts/DMLDroid/01.png)
+![DMLDroid framework](/assets/images/posts/DMLDroid/01.png)
 
 My research multimodal framework integrates complementary features extracted from Android APK files using three separate branches:
 

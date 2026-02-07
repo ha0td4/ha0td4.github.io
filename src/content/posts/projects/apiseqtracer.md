@@ -23,21 +23,21 @@ To evaluate the system, we aggregated malware execution traces from multiple pub
 All samples were executed inside a controlled sandbox environment to extract API call sequences for downstream processing. The final dataset contains multiple malware families alongside benign executables, forming a diverse testbed for behavior-based threat analysis.
 
 The label distribution is shown in the chart below:
-![image](https://hackmd.io/_uploads/HJANkCXE-x.png)
+![image](/assets/images/posts/apiseqtracer/01.png)
 
 As illustrated in the pie chart, Trojan samples dominate the dataset, followed by Miscellaneous, Adware, and Benign classes. This imbalance reflects common trends in real-world malware distributions and highlights the importance of balanced evaluation strategies.
 
-## Layer 1 – Malware Detection
+# Layer 1 – Malware Detection
 
 Execution traces are first collected through a sandbox environment, where each sample is analyzed and its API call sequence is recorded. These API calls are transformed into a fixed-length feature vector of 1143 dimensions, with each dimension representing the frequency of a corresponding API within the global API set. An ensemble model combining Random Forest and XGBoost is used to classify the sample as malicious or benign. In addition to classification probability, this layer produces an explainability report using SHAP values, highlighting the APIs that contributed most to the model decision. The detection component therefore acts as the primary filtering stage, providing a reliable base for deeper behavioral analysis in subsequent layers.
 
-## Layer 2 – Behavioral Analysis
+# Layer 2 – Behavioral Analysis
 
 While Layer 1 focuses on classification, the second layer aims to capture and interpret behavioral patterns. The raw API sequence is first processed using a Log2-based noise reduction technique to eliminate redundant consecutive calls. The cleaned sequence is then segmented using a sliding-window approach to generate API gadgets—continuous execution fragments representing localized behaviors. Each gadget is encoded using CodeBERT to generate semantic embeddings, offering a richer contextual understanding compared to traditional discrete representations.
 
 These embeddings are clustered using HDBSCAN, and clusters with valid labels (cluster_id ≠ -1) are retained as behaviorally meaningful groups with potential malicious indicators. In parallel, a bag-of-APIs model using TF-IDF is applied, and Sequential Pattern Mining with PrefixSpan combined with Discriminative Scoring is used to extract API patterns that distinguish malware families. This layer produces two critical outputs: suspicious gadget clusters with maliciousness likelihood, and characteristic sequential API patterns representing family-specific behaviors. Both serve as essential input for semantic interpretation and MITRE mapping.
 
-## Layer 3 – MITRE ATT&CK Mapping
+# Layer 3 – MITRE ATT&CK Mapping
 
 The final layer bridges behavioral signals with threat intelligence by translating them into ATT&CK-aligned interpretations. A Large Language Model (LLM Interpreter) is first used to convert API gadgets into natural-language behavioral descriptions—such as network communication, system manipulation, file operations, or registry modification. These descriptions are then processed by an Analysis Agent operating under a Retrieval-Augmented Generation (RAG) framework. The agent queries a MITRE knowledge base containing tactic-technique mappings, malware behavior references, and API-to-TTP correlation data.
 
